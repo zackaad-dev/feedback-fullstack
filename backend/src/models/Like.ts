@@ -1,11 +1,22 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema } from "mongoose";
 
-const LikeSchema = new mongoose.Schema({
-    user: { type: Number, required: true }, 
+export interface ILike {
+  user: number;
+  targetId: mongoose.Types.ObjectId;
+  targetType: "post" | "comment";
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const LikeSchema = new Schema(
+  {
+    user: { type: Number, required: true },
     targetId: { type: Schema.Types.ObjectId, required: true },
-    targetType: { type: String, enum: ['post', 'comment'], required: true },
-});
+    targetType: { type: String, enum: ["post", "comment"], required: true },
+  },
+  { timestamps: true }
+);
 
 LikeSchema.index({ user: 1, targetId: 1, targetType: 1 }, { unique: true });
 
-export const Like = mongoose.model('Like', LikeSchema);
+export const Like = mongoose.models.Like || mongoose.model("Like", LikeSchema);

@@ -1,4 +1,5 @@
 import { Post } from "../models/Post";
+import { Like } from "../models/Like";
 import { AuthUser } from "../middleware/auth";
 import { ServiceError } from "./auth.service";
 
@@ -14,19 +15,64 @@ export interface UpdatePostInput {
   user: AuthUser;
 }
 
-export const getAllPosts = async () => {
-  const posts = await Post.find().sort({ createdAt: -1 });
-  return posts;
+export const getAllPosts = async (userId?: number) => {
+  const rawPosts = await Post.find().sort({ createdAt: -1 }).lean();
+
+  if (!rawPosts || rawPosts.length === 0) {
+    return [];
+  }
+
+  const posts = rawPosts as any[];
+
+  if (!userId) {
+    return posts.map((p) => ({
+      ...p,
+      id: p._id.toString(),
+      likedByCurrentUser: false,
+    }));
+  }
+
+  const postIds = posts.map((p) => p._id);
+  const userLikes = await Like.find({
+    user: userId,
+    targetType: "post",
+    targetId: { $in: postIds },
+  }).select("targetId").lean();
+
+  const likedSet = new Set((userLikes as any[]).map((l) => l.targetId.toString()));
+
+  return posts.map((p) => ({
+    ...p,
+    id: p._id.toString(),
+    likedByCurrentUser: likedSet.has(p._id.toString()),
+  }));
 };
 
-export const getPostById = async (id: string) => {
-  const post = await Post.findById(id);
-  if (!post) {
+export const getPostById = async (id: string, userId?: number) => {
+  const rawPost = await Post.findById(id).lean();
+  if (!rawPost) {
     const error: ServiceError = new Error("Post not found");
     error.statusCode = 404;
     throw error;
   }
-  return post;
+
+  const post = rawPost as any;
+
+  let likedByCurrentUser = false;
+  if (userId) {
+    const existingLike = await Like.findOne({
+      user: userId,
+      targetType: "post",
+      targetId: id,
+    });
+    likedByCurrentUser = !!existingLike;
+  }
+
+  return {
+    ...post,
+    id: post._id.toString(),
+    likedByCurrentUser,
+  };
 };
 
 export const createPost = async ({
@@ -49,7 +95,11 @@ export const createPost = async ({
     },
   });
 
-  return post;
+  return {
+    ...post.toObject(),
+    id: post._id.toString(),
+    likedByCurrentUser: false,
+  };
 };
 
 export const updatePost = async (
@@ -73,7 +123,10 @@ export const updatePost = async (
   if (content) post.content = content.trim();
 
   await post.save();
-  return post;
+  return {
+    ...post.toObject(),
+    id: post._id.toString(),
+  };
 };
 
 export const deletePost = async (id: string, user: AuthUser) => {

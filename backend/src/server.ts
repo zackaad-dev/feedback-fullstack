@@ -6,6 +6,7 @@ import swaggerSpec from "./config/swagger";
 import connectDB from "./config/db";
 import authRoutes from "./routes/auth";
 import postRoutes from "./routes/posts";
+import likeRoutes from "./routes/likes";
 
 dotenv.config();
 const envFile =
@@ -25,6 +26,7 @@ app.get("/api/v1/health", (_req: Request, res: Response) => {
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/posts", postRoutes);
+app.use("/api/v1/likes", likeRoutes);
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

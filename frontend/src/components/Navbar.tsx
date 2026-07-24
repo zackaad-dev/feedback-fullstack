@@ -23,26 +23,16 @@ export const Navbar = () => {
     >
       <Toolbar sx={{ justifyContent: "space-between", maxWidth: "760px", width: "100%", mx: "auto", px: { xs: 2, sm: 4 } }}>
         <Box
-          sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer" }}
+          sx={{ display: "flex", alignItems: "center", gap: 1.2, cursor: "pointer" }}
           onClick={() => navigate("/dashboard")}
         >
           <Box
-            sx={{
-              width: 28,
-              height: 28,
-              borderRadius: "50%",
-              bgcolor: "text.primary",
-              color: "background.paper",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: 900,
-              fontSize: 16,
-            }}
-          >
-            F
-          </Box>
-          <Typography variant="h6" sx={{ fontWeight: 900, letterSpacing: "-0.03em" }}>
+            component="img"
+            src="/favicon.svg"
+            alt="Feedback Logo"
+            sx={{ width: 26, height: 26, display: "block" }}
+          />
+          <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: "-0.02em" }}>
             Feedback
           </Typography>
         </Box>

@@ -1,4 +1,5 @@
-import { IconButton, Typography, Stack } from "@mui/material";
+import React from "react";
+import { IconButton, Typography, Box } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useAuth } from "../context/AuthContext";
@@ -17,11 +18,14 @@ export const LikeButton = ({
   target,
   onLikeToggled,
   targetType,
-  readonly = true,
+  readonly = false,
 }: LikeButtonProps) => {
   const { token, isLoggedIn } = useAuth();
 
-  const handleToggleLike = async () => {
+  const isLiked = Boolean(target.likedByCurrentUser);
+
+  const handleToggleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!token || readonly || !isLoggedIn) return;
     try {
       await toggleLike(target.id, targetType, token);
@@ -32,22 +36,48 @@ export const LikeButton = ({
   };
 
   return (
-    <Stack direction="row" alignItems="center" spacing={0.5}>
+    <Box
+      onClick={handleToggleLike}
+      sx={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 0.75,
+        cursor: isLoggedIn && !readonly ? "pointer" : "default",
+        userSelect: "none",
+        color: isLiked ? "#E0245E" : "text.secondary",
+        "&:hover": {
+          color: isLiked ? "#E0245E" : "text.primary",
+        },
+      }}
+    >
       <IconButton
-        onClick={handleToggleLike}
         disabled={!isLoggedIn || readonly}
         size="small"
-        sx={{ color: target.likedByCurrentUser ? "text.primary" : "text.secondary" }}
+        sx={{
+          p: 0,
+          color: isLiked ? "#E0245E" : "inherit",
+          "&.Mui-disabled": {
+            color: isLiked ? "#E0245E" : "inherit",
+          },
+        }}
       >
-        {target.likedByCurrentUser ? (
-          <FavoriteIcon fontSize="small" />
+        {isLiked ? (
+          <FavoriteIcon sx={{ fontSize: 18, color: "#E0245E" }} />
         ) : (
-          <FavoriteBorderIcon fontSize="small" />
+          <FavoriteBorderIcon sx={{ fontSize: 18 }} />
         )}
       </IconButton>
-      <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
-        {target.likes_count}
+      <Typography
+        variant="body2"
+        sx={{
+          fontWeight: 600,
+          fontSize: "0.875rem",
+          lineHeight: 1,
+          color: isLiked ? "#E0245E" : "inherit",
+        }}
+      >
+        {target.likes_count || 0}
       </Typography>
-    </Stack>
+    </Box>
   );
 };

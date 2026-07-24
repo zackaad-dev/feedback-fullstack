@@ -8,7 +8,7 @@ export const getPosts = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const posts = await postService.getAllPosts();
+    const posts = await postService.getAllPosts(req.user?.id);
     return res.status(200).json({ posts });
   } catch (error) {
     const err = error as ServiceError;
@@ -26,7 +26,7 @@ export const getPost = async (
 ): Promise<Response> => {
   try {
     const id = req.params.id as string;
-    const post = await postService.getPostById(id);
+    const post = await postService.getPostById(id, req.user?.id);
     return res.status(200).json(post);
   } catch (error) {
     const err = error as ServiceError;

@@ -6,7 +6,7 @@ import {
   updatePost,
   deletePost,
 } from "../controllers/post.controller";
-import auth from "../middleware/auth";
+import auth, { optionalAuth } from "../middleware/auth";
 
 const router = Router();
 
@@ -26,7 +26,7 @@ const router = Router();
  *               items:
  *                 $ref: '#/components/schemas/Post'
  */
-router.get("/", getPosts);
+router.get("/", optionalAuth, getPosts);
 
 /**
  * @swagger
@@ -50,7 +50,7 @@ router.get("/", getPosts);
  *       404:
  *         description: Post not found
  */
-router.get("/:id", getPost);
+router.get("/:id", optionalAuth, getPost);
 
 /**
  * @swagger

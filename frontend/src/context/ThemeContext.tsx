@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useMemo, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 
 type ColorMode = "dark" | "light";
@@ -15,7 +21,9 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export const useColorMode = () => useContext(ThemeContext);
 
-export const CustomThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const CustomThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [mode, setMode] = useState<ColorMode>(() => {
     const saved = localStorage.getItem("theme_mode");
     return saved === "light" || saved === "dark" ? saved : "dark";
@@ -35,62 +43,69 @@ export const CustomThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
         palette: {
           mode,
           primary: {
-            main: mode === "dark" ? "#FFFFFF" : "#000000",
-            contrastText: mode === "dark" ? "#000000" : "#FFFFFF",
+            main: mode === "dark" ? "#FFFFFF" : "#101010",
+            contrastText: mode === "dark" ? "#101010" : "#FFFFFF",
           },
           secondary: {
             main: mode === "dark" ? "#A1A1AA" : "#71717A",
           },
           background: {
-            default: mode === "dark" ? "#000000" : "#FFFFFF",
-            paper: mode === "dark" ? "#0A0A0A" : "#FAFAFA",
+            default: mode === "dark" ? "#101010" : "#FFFFFF",
+            paper: mode === "dark" ? "#181818" : "#FAFAFA",
           },
           text: {
-            primary: mode === "dark" ? "#FFFFFF" : "#000000",
-            secondary: mode === "dark" ? "#A1A1AA" : "#71717A",
+            primary: mode === "dark" ? "#FFFFFF" : "#101010",
+            secondary: mode === "dark" ? "#909095" : "#606065",
           },
-          divider: mode === "dark" ? "#262626" : "#E4E4E7",
+          divider: mode === "dark" ? "#282828" : "#E4E4E7",
           action: {
-            hover: mode === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.04)",
+            hover:
+              mode === "dark"
+                ? "rgba(255, 255, 255, 0.05)"
+                : "rgba(0, 0, 0, 0.04)",
           },
         },
         typography: {
-          fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`,
-          h4: { fontWeight: 800, letterSpacing: "-0.03em" },
-          h5: { fontWeight: 800, letterSpacing: "-0.02em" },
-          h6: { fontWeight: 700, letterSpacing: "-0.01em" },
+          fontFamily: `Inter`,
+          h4: { fontWeight: 700, letterSpacing: "-0.01em" },
+          h5: { fontWeight: 700, letterSpacing: "-0.01em" },
+          h6: { fontWeight: 700 },
           subtitle1: { fontWeight: 700 },
-          button: { textTransform: "none", fontWeight: 700, letterSpacing: "-0.01em" },
+          button: { textTransform: "none", fontWeight: 600 },
         },
         shape: {
-          borderRadius: 12,
+          borderRadius: 8,
         },
         components: {
           MuiButton: {
             styleOverrides: {
               root: {
                 borderRadius: 9999,
-                fontWeight: 700,
+                fontWeight: 600,
                 boxShadow: "none",
-                padding: "8px 20px",
+                padding: "10px 24px",
+                fontSize: "0.95rem",
                 transition: "all 0.2s ease-in-out",
                 "&:hover": {
                   boxShadow: "none",
                 },
               },
               containedPrimary: {
-                backgroundColor: mode === "dark" ? "#FFFFFF" : "#000000",
-                color: mode === "dark" ? "#000000" : "#FFFFFF",
+                backgroundColor: mode === "dark" ? "#FFFFFF" : "#101010",
+                color: mode === "dark" ? "#101010" : "#FFFFFF",
                 "&:hover": {
                   backgroundColor: mode === "dark" ? "#E4E4E7" : "#27272A",
                 },
               },
               outlined: {
-                borderColor: mode === "dark" ? "#262626" : "#E4E4E7",
-                color: mode === "dark" ? "#FFFFFF" : "#000000",
+                borderColor: mode === "dark" ? "#333333" : "#E4E4E7",
+                color: mode === "dark" ? "#FFFFFF" : "#101010",
                 "&:hover": {
-                  borderColor: mode === "dark" ? "#52525B" : "#A1A1AA",
-                  backgroundColor: mode === "dark" ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+                  borderColor: mode === "dark" ? "#666666" : "#A1A1AA",
+                  backgroundColor:
+                    mode === "dark"
+                      ? "rgba(255, 255, 255, 0.05)"
+                      : "rgba(0, 0, 0, 0.05)",
                 },
               },
             },
@@ -100,24 +115,25 @@ export const CustomThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
               root: {
                 backgroundImage: "none",
                 borderRadius: 16,
-                border: `1px solid ${mode === "dark" ? "#262626" : "#E4E4E7"}`,
+                border: `1px solid ${mode === "dark" ? "#282828" : "#E4E4E7"}`,
                 boxShadow: "none",
-                backgroundColor: mode === "dark" ? "#0A0A0A" : "#FFFFFF",
+                backgroundColor: mode === "dark" ? "#181818" : "#FFFFFF",
               },
             },
           },
           MuiOutlinedInput: {
             styleOverrides: {
               root: {
-                borderRadius: 12,
+                borderRadius: 8,
+                backgroundColor: mode === "dark" ? "#101010" : "#FFFFFF",
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: mode === "dark" ? "#262626" : "#E4E4E7",
+                  borderColor: mode === "dark" ? "#333333" : "#D4D4D8",
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: mode === "dark" ? "#52525B" : "#A1A1AA",
+                  borderColor: mode === "dark" ? "#555555" : "#A1A1AA",
                 },
                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: mode === "dark" ? "#FFFFFF" : "#000000",
+                  borderColor: mode === "dark" ? "#FFFFFF" : "#101010",
                   borderWidth: 1.5,
                 },
               },
@@ -132,7 +148,7 @@ export const CustomThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
           },
         },
       }),
-    [mode]
+    [mode],
   );
 
   return (
