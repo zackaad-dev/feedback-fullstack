@@ -1,51 +1,86 @@
-# Feedback Blogging Web App
+# Feedback Blogging Platform
 
-## 📌 Description
-Feedback is a minimalist, modern blogging platform designed for writers and content creators to share their thoughts easily. The goal is to provide a clean, distraction-free writing experience while incorporating essential blog management features. The platform will allow users to create, edit, and delete blog posts with a simple yet powerful interface
+Feedback is a modern blogging platform built with a decoupled architecture featuring a React SPA frontend and a Node.js/Express backend with MongoDB.
 
-## Features
+---
 
-### Core Features (MVP)
+## 🚀 Tech Stack
 
-- User Authentication: Users can register and log in securely using JWT-based authentication.
+- **Frontend**: React 19, TypeScript, Vite, Material-UI (MUI), React Router v7
+- **Backend**: Node.js, Express, MongoDB (Mongoose), JWT Authentication, bcryptjs
+- **API Documentation**: Swagger / OpenAPI 3.0 via `swagger-ui-express`
+- **CI/CD & DevOps**: GitHub Actions, Docker Compose
 
-- Blog Post Management (CRUD): Users can create, edit, delete, and read blog posts.
+---
 
-- Security & Performance:
-  Enforce HTTPS in production.
-  Implement CORS policies for secure API access.
-  Optimize API requests for response time <200ms.
+## 📂 Directory Structure
 
-- API Versioning: All endpoints will follow the /api/v1/ format for future scalability.
-
-## 📂 Project Structure
-```bash
-/backend
-  ├── /config       # Database connection & environment variables
-  ├── /controllers  # API logic for authentication, posts
-  ├── /models       # Mongoose schemas (User, Post)
-  ├── /routes       # Express API routes
-  ├── /middleware   # JWT authentication middleware
-  ├── server.js     # Main Express server file
-/frontend
-  ├── /src
-  │   ├── /components  # UI components
-  │   ├── /pages       # Pages like Home, Profile, Editor
-  │   ├── /context     # React Context API for state management
-  │   ├── /services    # API calls
-  │   ├── App.tsx      # Main App component
-  ├── package.json
+```text
+feedback/
+├── backend/                  # Node.js + Express REST API
+│   ├── src/
+│   │   ├── config/           # Database & Swagger configuration
+│   │   ├── controllers/      # Route request controllers
+│   │   ├── services/         # Domain & business logic layer
+│   │   ├── models/           # Mongoose schemas (User, Post, Comment)
+│   │   ├── routes/           # Express endpoint definitions
+│   │   ├── middleware/       # JWT authentication middleware
+│   │   └── server.js         # Main Express application entry point
+│   └── package.json
+├── frontend/                 # React 19 + TypeScript + Vite Client
+│   ├── src/
+│   │   ├── components/       # Reusable UI components
+│   │   ├── pages/            # Page view components (Login, Register, Dashboard)
+│   │   ├── context/          # React Context (AuthContext)
+│   │   ├── api/              # HTTP API client services
+│   │   └── App.tsx           # React router app root
+│   └── package.json
+├── docs/                     # Technical documentation
+│   ├── architecture.md       # System design & architecture details
+│   ├── api-guide.md          # REST API endpoints & Swagger info
+│   ├── setup-guide.md        # Detailed environment & local setup steps
+│   └── cicd.md               # GitHub Actions pipeline workflow documentation
+└── .github/workflows/        # CI/CD workflows
+    └── ci-cd.yml
 ```
 
-## 🛠️ Local Installation & Setup
+---
 
-1️⃣ Backend Setup
-```bash
-# Clone repository
-cd backend && npm install
-cd backend && npm run dev
+## ⚡ Quick Start
+
+### 1. Environment Setup
+Copy or create `.env.development` in the root directory:
+```env
+NODE_ENV=development
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/feedback
+JWT_SECRET=dev_secret_change_me
 ```
-2️⃣ Frontend Setup
+
+### 2. Start Backend Server
 ```bash
-cd frontend && npm install
-cd frontend && npm run dev
+cd backend
+npm install
+npm run dev
+```
+- API Base URL: `http://localhost:5000/api/v1`
+- Interactive Swagger Documentation: `http://localhost:5000/api/docs`
+
+### 3. Start Frontend Client
+```bash
+cd frontend
+npm install
+npm run dev
+```
+- Web Client URL: `http://localhost:5173`
+
+---
+
+## 📖 Documentation
+
+For detailed development guides and system references, check the [`docs/`](./docs) folder:
+
+- 🏗️ [Architecture Guide](./docs/architecture.md)
+- 🔌 [API & Endpoint Guide](./docs/api-guide.md)
+- 🛠️ [Setup & Environment Guide](./docs/setup-guide.md)
+- 🔄 [CI/CD Workflow Documentation](./docs/cicd.md)

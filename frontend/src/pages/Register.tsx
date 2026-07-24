@@ -29,9 +29,9 @@ export const Register = () => {
     return(
         <NestCard>
             <Typography variant="h4" align="center" fontWeight="bold">Sign up</Typography>
-                <TextField value={username} label="Username" onChange={(e) => setUsername(e.target.value)} />
-                <TextField value={email} label="Email" onChange={(e) => setEmail(e.target.value)} />
-                <TextField value={password} label="Password" type="password" onChange={(e) => setPassword(e.target.value)} />
+                <TextField value={username} label="Username" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)} />
+                <TextField value={email} label="Email" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} />
+                <TextField value={password} label="Password" type="password" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} />
                 <Button variant="contained" onClick={handleRegister}>Register</Button>
                 <Typography variant="body2" align="center">
                 Already have an account?{" "}

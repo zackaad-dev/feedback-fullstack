@@ -62,8 +62,8 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
                         fullWidth
                         size="small"
                         placeholder="Write a comment..."
-                        onChange={(e) => setContent(e.target.value)}
-                        onKeyDown={(e) => {
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContent(e.target.value)}
+                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                             if (e.key === "Enter") handleSubmit();
                         }}
                         />

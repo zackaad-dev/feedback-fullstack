@@ -41,14 +41,14 @@ export const Create = () => {
             </Typography>
 
             <Box component="form" display="flex" flexDirection="column" gap={2}>
-            <TextField label="Title" required fullWidth onChange={(e) => setTitle(e.target.value)} />
+            <TextField label="Title" required fullWidth onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)} />
             <TextField
                 label="Content"
                 required
                 multiline
                 minRows={8}
                 fullWidth
-                onChange={(e) => setContent(e.target.value)} 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContent(e.target.value)} 
             />
             </Box>
         </Box>
