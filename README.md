@@ -42,10 +42,10 @@ Feedback is a minimalist, modern blogging platform designed for writers and cont
 1️⃣ Backend Setup
 ```bash
 # Clone repository
-cd backend && npm intall
+cd backend && npm install
 cd backend && npm run dev
 ```
 2️⃣ Frontend Setup
 ```bash
-cd frontend && npm intall
+cd frontend && npm install
 cd frontend && npm run dev
