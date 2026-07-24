@@ -26,7 +26,7 @@ const PostSchema = new mongoose.Schema(
     likes_count: { type: Number, required: true, default: 0 },
     comment_count: { type: Number, required: true, default: 0 },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 PostSchema.set("toJSON", {

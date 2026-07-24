@@ -1,5 +1,4 @@
-import React from "react";
-import {
+import React, {
   createContext,
   ReactNode,
   useCallback,
@@ -28,19 +27,31 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(() => {
+    return localStorage.getItem("token");
+  });
 
-  const login = useCallback((responseToken: string, user: User) => {
+  const [user, setUser] = useState<User | null>(() => {
+    const savedUser = localStorage.getItem("user");
+    try {
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const login = useCallback((responseToken: string, userObj: User) => {
     setToken(responseToken);
-    setUser(user);
+    setUser(userObj);
     localStorage.setItem("token", responseToken);
+    localStorage.setItem("user", JSON.stringify(userObj));
   }, []);
 
   const logout = useCallback(() => {
     setToken(null);
     setUser(null);
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
   }, []);
 
   return (
