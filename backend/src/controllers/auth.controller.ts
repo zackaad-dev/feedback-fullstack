@@ -1,7 +1,11 @@
-const { validationResult } = require("express-validator");
-const authService = require("../services/auth.service");
+import { Request, Response } from "express";
+import { validationResult } from "express-validator";
+import * as authService from "../services/auth.service";
 
-exports.register = async (req, res) => {
+export const register = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -16,15 +20,19 @@ exports.register = async (req, res) => {
       user,
     });
   } catch (error) {
-    if (error.statusCode) {
-      return res.status(error.statusCode).json({ error: error.message });
+    const err = error as authService.ServiceError;
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({ error: err.message });
     }
     console.error("Server error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -40,8 +48,9 @@ exports.login = async (req, res) => {
       user: result.user,
     });
   } catch (error) {
-    if (error.statusCode) {
-      return res.status(error.statusCode).json({ error: error.message });
+    const err = error as authService.ServiceError;
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({ error: err.message });
     }
     console.error("Server error:", error);
     return res.status(500).json({ error: "Internal server error" });

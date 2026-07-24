@@ -1,13 +1,14 @@
-const express = require("express");
-const router = express.Router();
-const {
+import { Router } from "express";
+import {
   getPosts,
   getPost,
   createPost,
   updatePost,
   deletePost,
-} = require("../controllers/post.controller");
-const auth = require("../middleware/auth");
+} from "../controllers/post.controller";
+import auth from "../middleware/auth";
+
+const router = Router();
 
 /**
  * @swagger
@@ -134,4 +135,4 @@ router.put("/:id", auth, updatePost);
  */
 router.delete("/:id", auth, deletePost);
 
-module.exports = router;
+export default router;

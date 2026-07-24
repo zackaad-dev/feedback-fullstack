@@ -1,9 +1,11 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./config/swagger");
-const connectDB = require("./config/db");
+import express, { Request, Response } from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger";
+import connectDB from "./config/db";
+import authRoutes from "./routes/auth";
+import postRoutes from "./routes/posts";
 
 dotenv.config();
 const envFile =
@@ -17,10 +19,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const authRoutes = require("./routes/auth");
-const postRoutes = require("./routes/posts");
-
-app.get("/api/v1/health", (req, res) => {
+app.get("/api/v1/health", (_req: Request, res: Response) => {
   res.json({ status: "ok" });
 });
 
@@ -34,3 +33,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+export default app;
