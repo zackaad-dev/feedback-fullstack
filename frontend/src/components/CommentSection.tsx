@@ -1,9 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
 import type { Comment } from "../models/Comment";
-import { Typography, Stack, Card, CardContent, TextField, Button, Box, Avatar } from "@mui/material";
+import {
+  Typography,
+  Stack,
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Box,
+  Avatar,
+  IconButton,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useComments } from "../hooks/useComments";
 import { useAuth } from "../context/AuthContext";
-import { createComment } from "../api/models/comment";
+import { createComment, deleteComment } from "../api/models/comment";
 import { getPostComments } from "../api/models/post";
 import { LikeButton } from "./LikeButton";
 
@@ -12,12 +23,16 @@ interface CommentSectionProps {
 }
 
 export const CommentSection = ({ postId }: CommentSectionProps) => {
-  const { token, isLoggedIn } = useAuth();
-  const safeToken = typeof token === "string" && token.trim() && token !== "null" ? token : undefined;
+  const { token, isLoggedIn, user } = useAuth();
+  const safeToken =
+    typeof token === "string" && token.trim() && token !== "null"
+      ? token
+      : undefined;
 
   const [comments] = useComments(postId, safeToken);
   const [postComments, setPostComments] = useState<Comment[]>([]);
   const [content, setContent] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const reloadComments = useCallback(async () => {
     if (!postId) return;
@@ -30,15 +45,28 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
   }, [postId, safeToken]);
 
   const handleSubmit = async () => {
-    if (!content.trim()) return;
+    if (!content.trim() || isSubmitting) return;
     try {
       if (typeof token === "string" && token.trim()) {
+        setIsSubmitting(true);
         await createComment({ postId, content }, token);
         setContent("");
         await reloadComments();
       }
     } catch (error) {
       console.error("Error posting comment", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!token) return;
+    try {
+      await deleteComment(commentId, token);
+      await reloadComments();
+    } catch (error) {
+      console.error("Error deleting comment:", error);
     }
   };
 
@@ -51,7 +79,7 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
   return (
     <Stack spacing={2} mt={3}>
       <Typography variant="h6" sx={{ fontWeight: 800 }}>
-        Replies
+        Replies ({displayedComments.length})
       </Typography>
 
       {isLoggedIn ? (
@@ -61,7 +89,9 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
             fullWidth
             size="small"
             placeholder="Post your reply"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContent(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setContent(e.target.value)
+            }
             onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -69,8 +99,14 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
               }
             }}
           />
-          <Button variant="contained" color="primary" onClick={handleSubmit} disabled={!content.trim()}>
-            Reply
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            disabled={!content.trim() || isSubmitting}
+            sx={{ px: 3, py: 1 }}
+          >
+            {isSubmitting ? "Replying..." : "Reply"}
           </Button>
         </Stack>
       ) : (
@@ -80,36 +116,70 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
       )}
 
       {displayedComments.length > 0 ? (
-        displayedComments.map((comment) => (
-          <Card key={comment.id} sx={{ backgroundColor: "background.paper" }}>
-            <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
-              <Stack direction="row" spacing={1.5} alignItems="flex-start">
-                <Avatar sx={{ width: 32, height: 32, bgcolor: "primary.main", fontSize: "0.875rem", fontWeight: 700 }}>
-                  {comment.author?.username ? comment.author.username[0].toUpperCase() : "U"}
-                </Avatar>
-                <Box flex={1}>
-                  <Stack direction="row" spacing={1} alignItems="center" mb={0.5}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                      @{comment.author?.username || "anonymous"}
+        displayedComments.map((comment) => {
+          const isAuthor = user?.id === comment.author?.uid;
+
+          return (
+            <Card key={comment.id} sx={{ backgroundColor: "background.paper" }}>
+              <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+                <Stack direction="row" spacing={1.5} alignItems="flex-start">
+                  <Avatar
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      bgcolor: "text.primary",
+                      color: "background.paper",
+                      fontSize: "0.85rem",
+                      fontWeight: 800,
+                    }}
+                  >
+                    {comment.author?.username
+                      ? comment.author.username[0].toUpperCase()
+                      : "U"}
+                  </Avatar>
+                  <Box flex={1}>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      mb={0.5}
+                    >
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                          @{comment.author?.username || "anonymous"}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          • {new Date(comment.createdAt).toLocaleDateString()}
+                        </Typography>
+                      </Stack>
+
+                      {isAuthor && (
+                        <IconButton
+                          size="small"
+                          onClick={() => handleDeleteComment(comment.id)}
+                          sx={{ p: 0.5, color: "text.secondary" }}
+                        >
+                          <DeleteIcon sx={{ fontSize: 16 }} />
+                        </IconButton>
+                      )}
+                    </Stack>
+
+                    <Typography variant="body2" sx={{ mb: 1.5, lineHeight: 1.5 }}>
+                      {comment.content}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      • {new Date(comment.createdAt).toLocaleDateString()}
-                    </Typography>
-                  </Stack>
-                  <Typography variant="body2" sx={{ mb: 1.5, lineHeight: 1.5 }}>
-                    {comment.content}
-                  </Typography>
-                  <LikeButton
-                    target={comment}
-                    targetType="comment"
-                    onLikeToggled={reloadComments}
-                    readonly={false}
-                  />
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
-        ))
+
+                    <LikeButton
+                      target={comment}
+                      targetType="comment"
+                      onLikeToggled={reloadComments}
+                      readonly={false}
+                    />
+                  </Box>
+                </Stack>
+              </CardContent>
+            </Card>
+          );
+        })
       ) : (
         <Typography variant="body2" color="text.secondary" py={2}>
           No replies yet.

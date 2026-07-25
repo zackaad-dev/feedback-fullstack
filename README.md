@@ -18,7 +18,7 @@ Some of the larger changes in this version include:
 - Reorganized the backend into separate routes, controllers, services, and models.
 - Standardized backend file naming (for example, `post.controller.ts` instead of `postController.js`).
 - Added Swagger/OpenAPI documentation available at `/api/docs`.
-- Dockerized the application and added deployment documentation for DigitalOcean.
+- 🐳 **Single-Domain Dockerized Deployment**: Fully containerized the stack using Docker Compose with single-domain path-based routing (`feedback.mydomain.com`, `/api` ➔ backend, `/` ➔ frontend).
 - Improved the like/unlike implementation with proper database constraints and immediate UI updates.
 
 ---
@@ -127,3 +127,10 @@ Additional documentation is available in the `docs/` directory.
 ---
 
 This refactor was primarily about improving the project itself rather than adding new features. The goal was to clean up the architecture, migrate to TypeScript, improve documentation, and bring the codebase closer to how I would structure a similar project today.
+
+## Future Work
+
+- Password reset
+- Frontend integration of deleting posts/comments
+- Profile management (CRUD)
+- PUT, UPDATE, DELETE for comments and posts (with 'edited' stamp)

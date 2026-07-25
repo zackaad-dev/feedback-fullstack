@@ -1,6 +1,14 @@
 const getBaseUrl = (): string => {
-  const envUrl = typeof import.meta !== "undefined" && import.meta.env ? import.meta.env.VITE_API_BASE_URL : undefined;
-  return envUrl || "http://localhost:5000/api/v1";
+  const envUrl =
+    typeof import.meta !== "undefined" && import.meta.env
+      ? import.meta.env.VITE_API_BASE_URL
+      : undefined;
+
+  if (envUrl && envUrl.trim()) {
+    return envUrl.trim();
+  }
+
+  return "/api/v1";
 };
 
 class ApiClient {

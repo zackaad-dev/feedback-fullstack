@@ -14,15 +14,22 @@ The CI/CD pipeline runs on:
 
 ---
 
+## Environment & Compatibility
+
+- **Node.js**: v22 LTS (Required for pnpm v10+ `node:sqlite` native support).
+- **Package Manager**: `pnpm` v10 (`pnpm/action-setup@v4`).
+
+---
+
 ## Jobs Breakdown
 
 ### 1. `backend-ci` (Both `dev` & `main`)
-- Sets up Node.js v20 and `pnpm` v11.
+- Sets up Node.js v22 and `pnpm` v10.
 - Installs dependencies using `pnpm install --frozen-lockfile`.
 - Runs TypeScript type-checking and build validation (`pnpm test && pnpm build`).
 
 ### 2. `frontend-ci` (Both `dev` & `main`)
-- Sets up Node.js v20 and `pnpm` v11.
+- Sets up Node.js v22 and `pnpm` v10.
 - Installs dependencies using `pnpm install --frozen-lockfile`.
 - Runs Oxlint code linter (`pnpm run lint`).
 - Validates Vite production build (`pnpm run build`).

@@ -1,64 +1,79 @@
 # Deployment Guide
 
-This document describes how to deploy the Feedback application using Docker and DigitalOcean.
+This document describes how to deploy the **Feedback** application using Docker and a single-domain Nginx reverse proxy on DigitalOcean or any Linux VPS.
 
 ---
 
-## 1. Overview
+## 1. Single-Domain Architecture Overview
 
-The Feedback project is fully containerized using Docker and Docker Compose. It can be deployed to:
-- **DigitalOcean Droplet** (via Docker Compose)
-- **DigitalOcean App Platform** (via Dockerfiles)
+Everything lives under a single domain (**`feedback.mydomain.com`**):
+- **Web App (Frontend)**: Serves static React SPA via Nginx container at `https://feedback.mydomain.com/`
+- **REST API (Backend)**: Mounted at `https://feedback.mydomain.com/api/v1`
+- **Swagger Documentation**: Accessible at `https://feedback.mydomain.com/api/docs`
 
----
-
-## 2. Docker Architecture
-
-The root `docker-compose.yml` orchestrates 3 main services:
-1. **MongoDB Database (`mongo`)**: Document store on port `27017`.
-2. **Backend API (`backend`)**: Express + TypeScript service built from `backend/Dockerfile` running on port `5000`.
-3. **Frontend Application (`frontend`)**: React + Vite SPA built from `frontend/Dockerfile` running on port `3000` (Nginx).
+Because Express routes are mounted at `/api/v1/...`, requests to `/api` pass through directly to the backend container with zero path rewriting required.
 
 ---
 
-## 3. Deploying to DigitalOcean Droplet
+## 2. Environment Configuration
 
-### Step 1: Provision Droplet
-1. Create an **Ubuntu 22.04 / 24.04 LTS Droplet** on DigitalOcean.
-2. Install Docker and Docker Compose:
-   ```bash
-   sudo apt update && sudo apt install -y docker.io docker-compose-v2
-   ```
-
-### Step 2: Clone & Configure Environment
-```bash
-git clone https://github.com/your-username/feedback.git
-cd feedback
-
-cp .env.example .env
-# Edit production secrets in .env
+### Frontend Environment Variable
+In `frontend/.env` (or environment configuration):
+```env
+VITE_API_BASE_URL=https://feedback.mydomain.com/api/v1
 ```
 
-### Step 3: Launch Containers
+### Backend Environment Variables
+In `docker-compose.yml` or `.env`:
+```env
+PORT=5000
+MONGODB_URI=mongodb://mongo:27017/feedback
+NODE_ENV=production
+JWT_SECRET=your_secure_production_jwt_secret
+```
+
+---
+
+## 3. Host Nginx Reverse Proxy & SSL Setup
+
+### Step 1: Install Nginx & Certbot on Host
+```bash
+sudo apt update && sudo apt install -y nginx certbot python3-certbot-nginx
+```
+
+### Step 2: Issue SSL Certificate for Single Domain
+Issue an SSL certificate for `feedback.mydomain.com`:
+```bash
+sudo certbot certonly --nginx -d feedback.mydomain.com
+```
+
+### Step 3: Configure Host Nginx
+Copy [docs/nginx.conf](./nginx.conf) to `/etc/nginx/sites-available/feedback.conf`:
+```bash
+sudo cp docs/nginx.conf /etc/nginx/sites-available/feedback.conf
+sudo ln -s /etc/nginx/sites-available/feedback.conf /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+---
+
+## 4. Docker Compose Deployment
+
+### Step 1: Start Docker Containers
 ```bash
 docker compose up -d --build
 ```
 
----
-
-## 4. Environment Variables
-
-| Variable | Description | Production Default |
-|---|---|---|
-| `PORT` | Backend HTTP Port | `5000` |
-| `MONGO_URI` | MongoDB Connection URI | `mongodb://mongo:27017/feedback` |
-| `JWT_SECRET` | Secret key for JWT tokens | *Secret production key* |
-| `VITE_API_BASE_URL` | Frontend API Base URL | `https://api.yourdomain.com/api/v1` |
+### Step 2: Seed Production Database
+```bash
+docker compose exec backend pnpm run seed
+```
 
 ---
 
-## 5. Verification & Monitoring
+## 5. Verification
 
-- Check active containers: `docker compose ps`
-- View backend logs: `docker compose logs -f backend`
-- Swagger Documentation: `http://<DROPLET_IP>:5000/api/docs`
+- Web Client: `https://feedback.mydomain.com`
+- Backend API Health: `https://feedback.mydomain.com/api/v1/health`
+- Swagger Specs: `https://feedback.mydomain.com/api/docs`

@@ -6,9 +6,12 @@ import {
   updatePost,
   deletePost,
 } from "../controllers/post.controller";
+import commentRoutes from "./comments";
 import auth, { optionalAuth } from "../middleware/auth";
 
 const router = Router();
+
+router.use("/:postId/comments", commentRoutes);
 
 /**
  * @swagger
