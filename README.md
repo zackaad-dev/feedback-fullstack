@@ -1,86 +1,136 @@
 # Feedback Blogging Platform
 
-Feedback is a modern blogging platform built with a decoupled architecture featuring a React SPA frontend and a Node.js/Express backend with MongoDB.
+**Feedback** is a full-stack blogging platform with user authentication, posts, comments, and likes.
+
+This project originally started as **Nest Forum**, a project I built last year while learning the MERN stack. Rather than starting over, I decided to revisit it and refactor the existing codebase. The core functionality is mostly the same, but much of the project has been reorganized, modernized, and documented to improve maintainability and make it easier to develop and deploy.
 
 ---
 
-## 🚀 Tech Stack
+## Changes
 
-- **Frontend**: React 19, TypeScript, Vite, Material-UI (MUI), React Router v7
-- **Backend**: Node.js, Express, MongoDB (Mongoose), JWT Authentication, bcryptjs
-- **API Documentation**: Swagger / OpenAPI 3.0 via `swagger-ui-express`
-- **CI/CD & DevOps**: GitHub Actions, Docker Compose
+Some of the larger changes in this version include:
+
+- Renamed the project from **Nest Forum** to **Feedback**.
+- Added a `docs/` directory covering architecture, API endpoints, local development, CI/CD, and deployment.
+- Migrated the project from `npm` to `pnpm`.
+- Rebuilt the frontend with React 19, TypeScript, and Material UI, including a simplified black-and-white theme with light and dark mode support.
+- Converted the backend from JavaScript to TypeScript.
+- Reorganized the backend into separate routes, controllers, services, and models.
+- Standardized backend file naming (for example, `post.controller.ts` instead of `postController.js`).
+- Added Swagger/OpenAPI documentation available at `/api/docs`.
+- 🐳 **Single-Domain Dockerized Deployment**: Fully containerized the stack using Docker Compose with single-domain path-based routing (`feedback.mydomain.com`, `/api` ➔ backend, `/` ➔ frontend).
+- Improved the like/unlike implementation with proper database constraints and immediate UI updates.
 
 ---
 
-## 📂 Directory Structure
+## Tech Stack
+
+### Frontend
+
+- React 19
+- TypeScript
+- Vite
+- Material UI
+- React Router v7
+
+### Backend
+
+- Node.js
+- Express
+- TypeScript
+- MongoDB (Mongoose)
+- JWT Authentication
+- bcryptjs
+
+### Tooling
+
+- pnpm
+- Docker & Docker Compose
+- GitHub Actions
+- Swagger / OpenAPI
+
+---
+
+## Project Structure
 
 ```text
 feedback/
-├── backend/                  # Node.js + Express REST API
+├── backend/
 │   ├── src/
-│   │   ├── config/           # Database & Swagger configuration
-│   │   ├── controllers/      # Route request controllers
-│   │   ├── services/         # Domain & business logic layer
-│   │   ├── models/           # Mongoose schemas (User, Post, Comment)
-│   │   ├── routes/           # Express endpoint definitions
-│   │   ├── middleware/       # JWT authentication middleware
-│   │   └── server.js         # Main Express application entry point
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── server.ts
+│   ├── tsconfig.json
 │   └── package.json
-├── frontend/                 # React 19 + TypeScript + Vite Client
+│
+├── frontend/
 │   ├── src/
-│   │   ├── components/       # Reusable UI components
-│   │   ├── pages/            # Page view components (Login, Register, Dashboard)
-│   │   ├── context/          # React Context (AuthContext)
-│   │   ├── api/              # HTTP API client services
-│   │   └── App.tsx           # React router app root
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   └── App.tsx
 │   └── package.json
-├── docs/                     # Technical documentation
-│   ├── architecture.md       # System design & architecture details
-│   ├── api-guide.md          # REST API endpoints & Swagger info
-│   ├── setup-guide.md        # Detailed environment & local setup steps
-│   └── cicd.md               # GitHub Actions pipeline workflow documentation
-└── .github/workflows/        # CI/CD workflows
-    └── ci-cd.yml
+│
+├── docs/
+│   ├── architecture.md
+│   ├── api-guide.md
+│   ├── setup-guide.md
+│   ├── cicd.md
+│   └── deployment.md
+│
+└── docker-compose.yml
 ```
 
 ---
 
-## ⚡ Quick Start
+## Getting Started
 
-### 1. Environment Setup
-Copy or create `.env.development` in the root directory:
-```env
-NODE_ENV=development
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/feedback
-JWT_SECRET=dev_secret_change_me
-```
+### Backend
 
-### 2. Start Backend Server
 ```bash
 cd backend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
-- API Base URL: `http://localhost:5000/api/v1`
-- Interactive Swagger Documentation: `http://localhost:5000/api/docs`
 
-### 3. Start Frontend Client
+API: `http://localhost:5000/api/v1`
+
+Swagger: `http://localhost:5000/api/docs`
+
+### Frontend
+
 ```bash
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
-- Web Client URL: `http://localhost:5173`
+
+Application: `http://localhost:5173`
 
 ---
 
-## 📖 Documentation
+## Documentation
 
-For detailed development guides and system references, check the [`docs/`](./docs) folder:
+Additional documentation is available in the `docs/` directory.
 
-- 🏗️ [Architecture Guide](./docs/architecture.md)
-- 🔌 [API & Endpoint Guide](./docs/api-guide.md)
-- 🛠️ [Setup & Environment Guide](./docs/setup-guide.md)
-- 🔄 [CI/CD Workflow Documentation](./docs/cicd.md)
+- Architecture
+- API Reference
+- Local Setup
+- CI/CD
+- Deployment
+
+---
+
+This refactor was primarily about improving the project itself rather than adding new features. The goal was to clean up the architecture, migrate to TypeScript, improve documentation, and bring the codebase closer to how I would structure a similar project today.
+
+## Future Work
+
+- Password reset
+- Frontend integration of deleting posts/comments
+- Profile management (CRUD)
+- PUT, UPDATE, DELETE for comments and posts (with 'edited' stamp)

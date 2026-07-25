@@ -1,13 +1,17 @@
-const express = require("express");
-const router = express.Router();
-const {
+import { Router } from "express";
+import {
   getPosts,
   getPost,
   createPost,
   updatePost,
   deletePost,
-} = require("../controllers/post.controller");
-const auth = require("../middleware/auth");
+} from "../controllers/post.controller";
+import commentRoutes from "./comments";
+import auth, { optionalAuth } from "../middleware/auth";
+
+const router = Router();
+
+router.use("/:postId/comments", commentRoutes);
 
 /**
  * @swagger
@@ -25,7 +29,7 @@ const auth = require("../middleware/auth");
  *               items:
  *                 $ref: '#/components/schemas/Post'
  */
-router.get("/", getPosts);
+router.get("/", optionalAuth, getPosts);
 
 /**
  * @swagger
@@ -49,7 +53,7 @@ router.get("/", getPosts);
  *       404:
  *         description: Post not found
  */
-router.get("/:id", getPost);
+router.get("/:id", optionalAuth, getPost);
 
 /**
  * @swagger
@@ -134,4 +138,4 @@ router.put("/:id", auth, updatePost);
  */
 router.delete("/:id", auth, deletePost);
 
-module.exports = router;
+export default router;

@@ -2,10 +2,11 @@
 
 ## Overview
 
-Feedback is a full-stack blogging platform built with a decoupled client-server architecture:
+Feedback is a full-stack blogging platform built with an end-to-end TypeScript architecture:
 - **Frontend**: Single Page Application (SPA) built with React 19, TypeScript, Vite, and Material-UI (MUI).
-- **Backend**: RESTful API server built with Node.js, Express, and MongoDB (via Mongoose).
-- **CI/CD**: GitHub Actions workflow automation for testing, linting, and deployment.
+- **Backend**: RESTful API server built with Node.js, Express, TypeScript (`ts-node`/`tsc`), and MongoDB (via Mongoose).
+- **Package Manager**: `pnpm` for fast, efficient dependency management across backend and frontend modules.
+- **CI/CD**: GitHub Actions workflow automation using `pnpm` for testing, type-checking, and deployment.
 
 ---
 
@@ -21,7 +22,7 @@ Feedback is a full-stack blogging platform built with a decoupled client-server 
                             |
                             v
 +-------------------------------------------------------+
-|                 Express Server (Node.js)              |
+|             Express Server (Node.js + TS)             |
 |                                                       |
 |  +------------------+  +---------------------------+  |
 |  |  Routes (/api/v1)|  |  Swagger Docs (/api/docs) |  |
@@ -39,7 +40,7 @@ Feedback is a full-stack blogging platform built with a decoupled client-server 
 |           |                                           |
 |           v                                           |
 |  +------------------+                             |
-|  |      Models      |  (Mongoose Schemas)          |
+|  |      Models      |  (Mongoose TS Schemas)      |
 |  +--------+---------+                             |
 +-----------|-------------------------------------------+
             |
@@ -51,21 +52,21 @@ Feedback is a full-stack blogging platform built with a decoupled client-server 
 
 ---
 
-## Layered Backend Architecture
+## Layered Backend Architecture (TypeScript)
 
-The backend follows a standard 3-layer architecture pattern to maintain separation of concerns:
+The backend follows a strict 3-layer architecture pattern written in TypeScript:
 
-1. **Routes Layer (`/src/routes`)**
+1. **Routes Layer (`/src/routes/*.ts`)**
    - Defines Express endpoint URIs and mounts route handlers.
-   - Attaches validation rules (e.g. `express-validator`) and authentication middleware.
+   - Attaches validation rules (`express-validator`) and authentication middleware.
 
-2. **Controller Layer (`/src/controllers`)**
-   - Handles HTTP request parsing (`req.body`, `req.params`) and validation result handling.
-   - Delegates business operations to the Service layer and returns HTTP responses (`200`, `201`, `400`, `401`, `500`).
+2. **Controller Layer (`/src/controllers/*.ts`)**
+   - Handles HTTP request parsing (`req.body`, `req.params`) and type-safe responses.
+   - Delegates business operations to the Service layer and returns typed HTTP responses (`200`, `201`, `400`, `401`, `500`).
 
-3. **Service Layer (`/src/services`)**
-   - Encapsulates business logic, domain error handling, and password hashing (`bcryptjs`) / JWT token generation (`jsonwebtoken`).
-   - Interacts directly with database models.
+3. **Service Layer (`/src/services/*.ts`)**
+   - Encapsulates business logic, domain error handling, password hashing (`bcryptjs`), and JWT token generation (`jsonwebtoken`).
+   - Interacts directly with typed Mongoose models.
 
-4. **Model Layer (`/src/models`)**
-   - Defines Mongoose schemas (`User`, `Post`, `Comment`, `Counter`, `Like`) and DB lifecycle hooks.
+4. **Model Layer (`/src/models/*.ts`)**
+   - Defines Mongoose schemas (`User.ts`, `Post.ts`, `Comment.ts`, `Counter.ts`, `Like.ts`) and document interfaces.

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The repository uses GitHub Actions (`.github/workflows/ci-cd.yml`) to enforce code quality, run automated tests, and handle production deployments.
+The repository uses GitHub Actions (`.github/workflows/ci-cd.yml`) with `pnpm` to enforce type safety, code quality, automated testing, and production deployments.
 
 ---
 
@@ -14,18 +14,25 @@ The CI/CD pipeline runs on:
 
 ---
 
+## Environment & Compatibility
+
+- **Node.js**: v22 LTS (Required for pnpm v10+ `node:sqlite` native support).
+- **Package Manager**: `pnpm` v10 (`pnpm/action-setup@v4`).
+
+---
+
 ## Jobs Breakdown
 
 ### 1. `backend-ci` (Both `dev` & `main`)
-- Sets up Node.js v20 environment.
-- Installs dependencies using `npm ci`.
-- Runs backend test and syntax validation scripts (`npm test`).
+- Sets up Node.js v22 and `pnpm` v10.
+- Installs dependencies using `pnpm install --frozen-lockfile`.
+- Runs TypeScript type-checking and build validation (`pnpm test && pnpm build`).
 
 ### 2. `frontend-ci` (Both `dev` & `main`)
-- Sets up Node.js v20 environment.
-- Installs frontend dependencies using `npm ci`.
-- Runs Oxlint code linter (`npm run lint`).
-- Validates Vite production build (`npm run build`).
+- Sets up Node.js v22 and `pnpm` v10.
+- Installs dependencies using `pnpm install --frozen-lockfile`.
+- Runs Oxlint code linter (`pnpm run lint`).
+- Validates Vite production build (`pnpm run build`).
 
 ### 3. `deploy-main` (`main` branch pushes only)
 - Runs after `backend-ci` and `frontend-ci` complete successfully.

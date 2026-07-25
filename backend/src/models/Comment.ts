@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 export interface IComment {
   id: string;
@@ -14,24 +14,27 @@ export interface IComment {
   likedByCurrentUser?: boolean;
 }
 
-const CommentSchema = new mongoose.Schema({
-  post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
-  content: { type: String, required: true, trim: true },
-  likes_count: { type: Number, required: true, default: 0 },
-  author: {
-    uid: { type: Number, required: true },
-    username: { type: String, required: true }
+const CommentSchema = new mongoose.Schema(
+  {
+    post: { type: mongoose.Schema.Types.ObjectId, ref: "Post", required: true },
+    content: { type: String, required: true, trim: true },
+    likes_count: { type: Number, required: true, default: 0 },
+    author: {
+      uid: { type: Number, required: true },
+      username: { type: String, required: true },
+    },
   },
+  { timestamps: true }
+);
 
-}, { timestamps: true });
-
-CommentSchema.set('toJSON', {
+CommentSchema.set("toJSON", {
   virtuals: true,
   versionKey: false,
-  transform: (_, ret) => {
+  transform: (_, ret: Record<string, any>) => {
     ret.id = ret._id;
     delete ret._id;
   },
 });
 
-export const Comment = mongoose.model('Comment', CommentSchema);
+export const Comment =
+  mongoose.models.Comment || mongoose.model("Comment", CommentSchema);
